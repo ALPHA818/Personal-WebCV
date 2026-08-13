@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Hanre Bornman — Printable CV</title>
+    <style>
+      :root { color-scheme:light; --ink:#30241c; --muted:#6f5c4b; --rule:#c9b99c; }
+      * { box-sizing:border-box; } body { max-width:860px; margin:0 auto; padding:3rem 2rem; color:var(--ink); font:15px/1.55 Georgia,serif; }
+      h1,h2,h3,p { margin:0; } h1 { font-size:3rem; line-height:1; } h2 { margin:2rem 0 .7rem; padding-bottom:.35rem; border-bottom:1px solid var(--rule); font-size:1.4rem; } h3 { font-size:1.08rem; }
+      .kicker,.meta { color:var(--muted); font:11px/1.4 Arial,sans-serif; letter-spacing:.12em; text-transform:uppercase; } header { display:flex; justify-content:space-between; gap:2rem; padding-bottom:1.5rem; border-bottom:2px solid var(--ink); } header p { margin-top:.55rem; } .contact { text-align:right; }
+      section { break-inside:avoid; } .entry { display:grid; grid-template-columns:145px 1fr; gap:1.25rem; margin:0 0 1rem; } .entry p { margin-top:.2rem; } .entry ul { margin:.35rem 0 0; padding-left:1.2rem; } .skills { display:grid; grid-template-columns:repeat(3,1fr); gap:1rem; } .skills p { margin-top:.3rem; } a { color:inherit; }
+      footer { margin-top:2.2rem; padding-top:.8rem; border-top:1px solid var(--rule); color:var(--muted); font-size:12px; } @media (max-width:620px) { body { padding:1.5rem 1rem; } header { display:block; } .contact { margin-top:1rem; text-align:left; } .entry,.skills { grid-template-columns:1fr; gap:.25rem; } h1 { font-size:2.3rem; } }
+      @media print { body { padding:0; max-width:none; } a { text-decoration:none; } }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div><p class="kicker">Curriculum vitae</p><h1>Hanre Bornman</h1><p>Creative technologist · builder · problem solver</p></div>
+      <div class="contact"><p>South Africa</p><p><a href="mailto:hello@hanrebornman.dev">hello@hanrebornman.dev</a></p><p><a href="https://www.linkedin.com">linkedin.com</a> · <a href="https://github.com">github.com</a></p></div>
+    </header>
+    <main>
+      <section><h2>Profile</h2><p>I am a multidisciplinary developer who enjoys turning complex ideas into clear, useful tools. My work lives at the intersection of interface, systems and the people who use them. Curious by default and practical by nature, I care about the details that make a product feel calm, fast and considered.</p></section>
+      <section><h2>Experience</h2>
+        <article class="entry"><div class="meta">2023 — present</div><div><h3>Independent builder</h3><p>Product work · Remote</p><ul><li>Design and ship focused digital products, experiments and internal tools.</li><li>Translate ambiguous ideas into calm, usable interfaces.</li></ul></div></article>
+        <article class="entry"><div class="meta">2021 — 2023</div><div><h3>Frontend developer</h3><p>Digital products · South Africa</p><ul><li>Built accessible interfaces, component systems and data-rich workflows.</li><li>Worked closely with design and delivery partners.</li></ul></div></article>
+      </section>
+      <section><h2>Education &amp; training</h2><article class="entry"><div class="meta">Ongoing</div><div><h3>Continuous professional development</h3><p>Independent study, project-based development and documented practice.</p></div></article></section>
+      <section><h2>Skills</h2><div class="skills"><div><h3>Build</h3><p>JavaScript · TypeScript · React · HTML · CSS · Node.js</p></div><div><h3>Shape</h3><p>Design systems · responsive UI · accessibility · prototyping</p></div><div><h3>Ship</h3><p>Git · testing · performance · documentation · collaboration</p></div></div></section>
+      <section><h2>Selected projects</h2><article class="entry"><div class="meta">Active</div><div><h3>Personal WebCV</h3><p>Interactive professional document built to make a first impression feel like an experience.</p></div></article><article class="entry"><div class="meta">Prototype</div><div><h3>Quiet dashboard</h3><p>A calmer way to understand dense information, with hierarchy doing the heavy lifting.</p></div></article></section>
+      <section><h2>Contact</h2><p>Open to thoughtful digital work and interesting problems. Email <a href="mailto:hello@hanrebornman.dev">hello@hanrebornman.dev</a> to start a conversation.</p></section>
+    </main>
+    <footer>Printable CV · Hanre Bornman · <a href="index.html">Return to interactive WebCV</a></footer>
+  </body>
+</html>

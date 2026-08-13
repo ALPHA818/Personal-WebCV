@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#26352c" />
+    <title>Hanre Bornman — Interactive WebCV</title>
+    <meta
+      name="description"
+      content="The professional WebCV of Hanre Bornman, presented as a living parchment scroll."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip-link" href="#cv-content">Skip to CV content</a>
+
+    <div class="environment" aria-hidden="true">
+      <div class="environment__sun"></div>
+      <div class="environment__mist environment__mist--one"></div>
+      <div class="environment__mist environment__mist--two"></div>
+      <div class="environment__grain"></div>
+      <div class="environment__vignette"></div>
+    </div>
+
+    <header class="site-intro">
+      <p class="eyebrow">Personal WebCV · 2026</p>
+      <p class="intro-note">A working document in motion</p>
+    </header>
+
+    <main>
+      <section class="scroll-experience" id="cv-content" aria-label="Interactive curriculum vitae">
+        <div class="scroll-stage">
+          <div class="suspension suspension--left" aria-hidden="true">
+            <span class="rope-knot"></span>
+            <span class="rope-line"></span>
+          </div>
+          <div class="suspension suspension--right" aria-hidden="true">
+            <span class="rope-knot"></span>
+            <span class="rope-line"></span>
+          </div>
+
+          <div class="scroll-shadow" aria-hidden="true"></div>
+
+          <canvas class="roller-webgl" aria-hidden="true"></canvas>
+
+          <div class="roller roller--top" aria-hidden="true">
+            <span class="roller-support roller-support--left"><span class="roller-axle"></span></span>
+            <div class="roller-spin">
+              <div class="roller-cylinder">
+                <span class="roller-cap roller-cap--left"></span>
+                <span class="roller-core">
+                  <span class="rolled-paper rolled-paper--top"></span>
+                  <span class="cylinder-stripe"></span><span class="cylinder-marker"></span>
+                  <span class="engraving">PROFILE · ABOUT · EXPERIENCE</span>
+                </span>
+                <span class="roller-cap roller-cap--right"></span>
+              </div>
+            </div>
+            <span class="roller-support roller-support--right"><span class="roller-axle"></span></span>
+          </div>
+
+          <div class="reading-window">
+            <article class="parchment" aria-label="The CV parchment">
+              <div class="parchment-track">
+                <section class="paper-section paper-section--cover" data-section="opening" id="opening">
+                  <div class="cover-grid">
+                    <div>
+                      <p class="paper-kicker">A document of craft &amp; curiosity</p>
+                      <h1>Hanre<br /><em>Bornman</em></h1>
+                      <p class="role">Creative technologist · builder · problem solver</p>
+                    </div>
+                    <figure class="portrait">
+                      <div class="portrait-art" role="img" aria-label="Portrait placeholder for Hanre Bornman">
+                        <span class="portrait-initials">HB</span>
+                        <span class="portrait-caption">portrait<br />to come</span>
+                      </div>
+                      <figcaption>Hanre Bornman · Johannesburg</figcaption>
+                    </figure>
+                    <p class="lede">
+                      I make thoughtful digital experiences where rigorous engineering meets a little wonder.
+                    </p>
+                  </div>
+                  <div class="cover-footer">
+                    <span class="rule-mark">✦</span>
+                    <span>Scroll to unroll the story</span>
+                    <span class="down-mark">↓</span>
+                  </div>
+                  <div class="wax-seal" aria-label="Wax seal, decorative" role="img">
+                    <span>HB</span>
+                  </div>
+                </section>
+
+                <section class="paper-section" data-section="profile" id="profile">
+                  <div class="section-heading">
+                    <span class="section-number">01</span>
+                    <div>
+                      <p class="paper-kicker">Professional profile</p>
+                      <h2>Profile</h2>
+                    </div>
+                  </div>
+                  <div class="two-column">
+                    <p>
+                      I am a multidisciplinary developer who enjoys turning complex ideas into clear, useful tools. My work lives at the intersection of interface, systems and the people who use them.
+                    </p>
+                    <p>
+                      Curious by default and practical by nature, I care about the details that make a product feel calm, fast and considered.
+                    </p>
+                  </div>
+                  <div class="fact-strip">
+                    <div><span>Based in</span><strong>South Africa</strong></div>
+                    <div><span>Focus</span><strong>Web · product · systems</strong></div>
+                    <div><span>Approach</span><strong>Make it useful</strong></div>
+                  </div>
+                </section>
+
+                <section class="paper-section" data-section="experience" id="experience">
+                  <div class="section-heading">
+                    <span class="section-number">02</span>
+                    <div>
+                      <p class="paper-kicker">Selected chapters</p>
+                      <h2>Experience</h2>
+                    </div>
+                  </div>
+                  <div class="timeline">
+                    <article class="timeline-item">
+                      <div class="timeline-date">2023 — now</div>
+                      <div><h3>Independent builder</h3><p class="timeline-employer">Product work · Remote</p><p>Designing and shipping focused digital products, experiments and internal tools from first sketch to production.</p><ul><li>Translated ambiguous ideas into calm, usable interfaces.</li><li class="achievement">Notable result: shipped a working interactive WebCV prototype.</li></ul><span class="tool-note">Tools: JavaScript · HTML · CSS · Git</span></div>
+                    </article>
+                    <article class="timeline-item">
+                      <div class="timeline-date">2021 — 2023</div>
+                      <div><h3>Frontend developer</h3><p class="timeline-employer">Digital products · South Africa</p><p>Built accessible interfaces, component systems and data-rich workflows for teams that needed clarity at speed.</p><ul><li>Created reusable patterns that kept product experiences consistent.</li><li>Worked closely with design and delivery partners.</li></ul><span class="tool-note">Tools: React · TypeScript · CSS · Testing</span></div>
+                    </article>
+                    <article class="timeline-item">
+                      <div class="timeline-date">Earlier work</div>
+                      <div><h3>Learning through making</h3><p class="timeline-employer">Independent study · Ongoing</p><p>From small web experiments to collaborative builds, each project sharpened an instinct for useful simplicity.</p><ul><li>Built a habit of documenting decisions and finishing small experiments.</li></ul><span class="tool-note">Tools: Web platform · Documentation · Collaboration</span></div>
+                    </article>
+                  </div>
+                </section>
+
+                <section class="paper-section" data-section="education" id="education">
+                  <div class="section-heading">
+                    <span class="section-number">03</span>
+                    <div>
+                      <p class="paper-kicker">Foundations</p>
+                      <h2>Education</h2>
+                    </div>
+                  </div>
+                  <div class="education-register">
+                    <article class="education-entry"><div><p class="paper-kicker">Ongoing</p><h3>Technology is a living craft</h3><p class="education-meta">Independent study · South Africa</p></div><time>Current</time><p>Formal study, documentation, generous mentors and building things just beyond my current reach.</p></article>
+                    <article class="education-entry"><div><p class="paper-kicker">Practice</p><h3>Learning through delivery</h3><p class="education-meta">Project-based development</p></div><time>Always</time><p>Each shipped experiment turns curiosity into a repeatable way of working.</p></article>
+                  </div>
+                  <p class="margin-note">The best lessons leave a mark.</p>
+                </section>
+
+                <section class="paper-section" data-section="skills" id="skills">
+                  <div class="section-heading">
+                    <span class="section-number">04</span>
+                    <div>
+                      <p class="paper-kicker">Tools of the trade</p>
+                      <h2>Skills</h2>
+                    </div>
+                  </div>
+                  <div class="skill-groups">
+                    <div><h3>Build</h3><p>JavaScript · TypeScript · React · HTML · CSS · Node.js</p><span class="evidence-note">Used in: WebCV · digital product work</span></div>
+                    <div><h3>Shape</h3><p>Design systems · responsive UI · accessibility · prototyping</p><span class="evidence-note">Used in: interface experiments · product workflows</span></div>
+                    <div><h3>Ship</h3><p>Git · testing · performance · documentation · collaboration</p><span class="evidence-note">Used in: independent builds · team delivery</span></div>
+                  </div>
+                </section>
+
+                <section class="paper-section" data-section="projects" id="projects">
+                  <div class="section-heading">
+                    <span class="section-number">05</span>
+                    <div>
+                      <p class="paper-kicker">Work worth opening</p>
+                      <h2>Projects</h2>
+                    </div>
+                  </div>
+                  <div class="project-list">
+                    <article class="project-card"><span class="project-index">I</span><div><p class="project-category">Interactive document · Active</p><h3>Personal WebCV</h3><p>An interactive professional document built to make a first impression feel like an experience.</p><span class="project-tech">HTML · CSS · JavaScript</span><button class="project-open" type="button" data-project="webcv">Open project scroll <span>↗</span></button></div><span class="status-stamp">ACTIVE</span></article>
+                    <article class="project-card"><span class="project-index">II</span><div><p class="project-category">Interface study · Prototype</p><h3>Quiet dashboard</h3><p>A calmer way to understand dense information, with hierarchy doing the heavy lifting.</p><span class="project-tech">UI systems · Data · Accessibility</span><button class="project-open" type="button" data-project="dashboard">Open project scroll <span>↗</span></button></div><span class="status-stamp">PROTOTYPE</span></article>
+                    <article class="project-card"><span class="project-index">III</span><div><p class="project-category">Experiments · Ongoing</p><h3>Small useful things</h3><p>Experiments in motion, interaction and the satisfying edge between analog and digital.</p><span class="project-tech">Web platform · Motion · Writing</span><button class="project-open" type="button" data-project="experiments">Open project scroll <span>↗</span></button></div><span class="status-stamp">ONGOING</span></article>
+                  </div>
+                </section>
+
+                <section class="paper-section" data-section="strengths" id="strengths">
+                  <div class="section-heading">
+                    <span class="section-number">06</span>
+                    <div><p class="paper-kicker">Beyond the toolkit</p><h2>Strengths</h2></div>
+                  </div>
+                  <div class="strength-list">
+                    <div><span class="ink-mark">✦</span><h3>Make complexity legible</h3><p>Bring structure to ambiguous information so people can act with confidence.</p></div>
+                    <div><span class="ink-mark">✦</span><h3>Work with care</h3><p>Document decisions, notice the edge cases and leave systems easier to understand.</p></div>
+                    <div><span class="ink-mark">✦</span><h3>Learn in public</h3><p>Use experiments, feedback and clear communication to keep moving forward.</p></div>
+                  </div>
+                </section>
+
+                <section class="paper-section paper-section--closing" data-section="contact" id="contact">
+                  <div class="section-heading">
+                    <span class="section-number">07</span>
+                    <div><p class="paper-kicker">The final fold</p><h2>Contact</h2></div>
+                  </div>
+                  <p class="closing-copy">Have a good problem, a curious idea, or a team that cares about the details?</p>
+                  <div class="contact-actions">
+                    <a class="ink-button" href="mailto:hello@hanrebornman.dev">Write a letter <span>↗</span></a>
+                    <a class="ink-button ink-button--quiet" href="cv.html" target="_blank" rel="noreferrer">Open printable CV <span>↗</span></a>
+                    <a class="text-link" href="https://www.linkedin.com" target="_blank" rel="noreferrer">LinkedIn</a>
+                    <a class="text-link" href="https://github.com" target="_blank" rel="noreferrer">GitHub</a>
+                  </div>
+                  <div class="signature">Hanre <em>Bornman</em></div>
+                  <p class="closing-note">Thank you for taking the long way through.</p>
+                </section>
+              </div>
+            </article>
+          </div>
+
+          <div class="roller roller--bottom" aria-hidden="true">
+            <span class="roller-support roller-support--left"><span class="roller-axle"></span></span>
+            <div class="roller-spin">
+              <div class="roller-cylinder">
+                <span class="roller-cap roller-cap--left"></span>
+                <span class="roller-core">
+                  <span class="rolled-paper rolled-paper--bottom"></span>
+                  <span class="cylinder-stripe"></span><span class="cylinder-marker"></span>
+                  <span class="engraving">SKILLS · PROJECTS · CONTACT</span>
+                </span>
+                <span class="roller-cap roller-cap--right"></span>
+              </div>
+            </div>
+            <span class="roller-support roller-support--right"><span class="roller-axle"></span></span>
+          </div>
+
+          <nav class="section-nav" aria-label="CV sections">
+            <p>Navigate the scroll</p>
+            <a class="section-nav__item is-active" href="#opening" data-target="opening"><span>00</span> Top</a>
+            <a class="section-nav__item" href="#profile" data-target="profile"><span>01</span> Profile</a>
+            <a class="section-nav__item" href="#experience" data-target="experience"><span>02</span> Experience</a>
+            <a class="section-nav__item" href="#education" data-target="education"><span>03</span> Education</a>
+            <a class="section-nav__item" href="#skills" data-target="skills"><span>04</span> Skills</a>
+            <a class="section-nav__item" href="#projects" data-target="projects"><span>05</span> Projects</a>
+            <a class="section-nav__item" href="#contact" data-target="contact"><span>07</span> Contact</a>
+          </nav>
+
+          <div class="transport-status" aria-live="polite"><span class="status-dot"></span><span class="status-text">resting at profile</span></div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer"><span>HB / WebCV</span><span>Made with intention</span></footer>
+    <dialog class="project-dialog" id="project-dialog" aria-labelledby="project-dialog-title">
+      <div class="dialog-scroll">
+        <button class="dialog-close" type="button" aria-label="Close project details">×</button>
+        <p class="paper-kicker">Project record</p>
+        <h2 id="project-dialog-title">Project details</h2>
+        <p id="project-dialog-category" class="project-category"></p>
+        <div id="project-dialog-body"></div>
+      </div>
+    </dialog>
+    <script src="script.js"></script>
+    <script type="module" src="roller-scene.js"></script>
+  </body>
+</html>
