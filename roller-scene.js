@@ -122,7 +122,13 @@
   let measurementOverlay = null;
 
   const disposeObject = (object) => {
-    object.traverse((node) => { if (node.geometry) node.geometry.dispose(); });
+    object.traverse((node) => {
+      if (node.geometry) node.geometry.dispose();
+      if (node.material && !materialsToDispose.includes(node.material)) {
+        if (node.material.map) node.material.map.dispose();
+        node.material.dispose();
+      }
+    });
     scene.remove(object);
   };
 
@@ -132,14 +138,14 @@
     const { drumLengthCss, drumDiameterCss, contactMeshWidthCss, endCapDepthCss, visibleAxleLengthCss, axleDiameterCss } = layout.geometry;
     const length = drumLengthCss * cssScale;
     const radius = (drumDiameterCss / 2) * cssScale;
-    const capRadius = radius * 1.12;
+    const capRadius = radius * 1.14;
     const capDepth = endCapDepthCss * cssScale;
     const axleLength = visibleAxleLengthCss * cssScale;
     const axleRadius = (axleDiameterCss / 2) * cssScale;
     const contactWidth = contactMeshWidthCss * cssScale;
     const sign = isTop ? -1 : 1;
 
-    group.userData = { radius, length, sign, drum: null, isTop };
+    group.userData = { radius, length, sign, drum: null, isTop, paperMeshes: [], paperBaseRadius: radius * 1.12 };
     const fixed = new THREE.Group(); group.add(fixed);
     const axle = new THREE.Mesh(new THREE.CylinderGeometry(axleRadius, axleRadius, length + capDepth * 2 + axleLength * 2, 24), axleMaterial);
     axle.rotation.z = Math.PI / 2; axle.castShadow = true; fixed.add(axle);
@@ -160,17 +166,27 @@
 
     const drum = new THREE.Mesh(new THREE.CylinderGeometry(radius, radius, length, 64, 2, false), woodMaterial);
     drum.castShadow = true; drum.receiveShadow = true; drumGroup.add(drum);
-    const paperShell = new THREE.Mesh(new THREE.CylinderGeometry(radius * 1.055, radius * 1.055, contactWidth, 64, 1, true, Math.PI * .18, Math.PI * 1.7), paperMaterial);
+    const paperRadius = group.userData.paperBaseRadius;
+    // Full 360-degree sleeve: the wooden core is structural and remains
+    // completely hidden across the hanging parchment width.
+    const paperShell = new THREE.Mesh(new THREE.CylinderGeometry(paperRadius, paperRadius, contactWidth, 64, 2, true), paperMaterial);
     paperShell.castShadow = true; paperShell.receiveShadow = true; drumGroup.add(paperShell);
+    group.userData.paperMeshes.push(paperShell);
     for (const side of [-1, 1]) {
       const cap = new THREE.Mesh(new THREE.CylinderGeometry(capRadius, capRadius * .92, capDepth, 48), endMaterial);
       cap.position.y = side * (length / 2 + capDepth / 2); cap.castShadow = true; cap.receiveShadow = true; drumGroup.add(cap);
       const ridge = new THREE.Mesh(new THREE.TorusGeometry(capRadius * .78, radius * .055, 10, 48), endMaterial);
       ridge.rotation.x = Math.PI / 2; ridge.position.y = side * (length / 2 + capDepth + .01); ridge.castShadow = true; drumGroup.add(ridge);
-      const paperEdge = new THREE.Mesh(new THREE.TorusGeometry(radius * 1.055, radius * .025, 8, 48), paperEdgeMaterial);
+      const paperEdge = new THREE.Mesh(new THREE.TorusGeometry(paperRadius, radius * .025, 8, 48), paperEdgeMaterial);
       paperEdge.rotation.x = Math.PI / 2; paperEdge.position.y = side * (contactWidth * .47); drumGroup.add(paperEdge);
+      group.userData.paperMeshes.push(paperEdge);
+      for (let layer = 1; layer <= 3; layer += 1) {
+        const layerRing = new THREE.Mesh(new THREE.TorusGeometry(paperRadius - radius * (.035 * layer), radius * .009, 6, 48), paperEdgeMaterial);
+        layerRing.rotation.x = Math.PI / 2; layerRing.position.y = side * (contactWidth * (.47 - layer * .012)); drumGroup.add(layerRing);
+        group.userData.paperMeshes.push(layerRing);
+      }
     }
-    const stripe = new THREE.Mesh(new THREE.TorusGeometry(radius * 1.064, radius * .035, 8, 64), stripeMaterial);
+    const stripe = new THREE.Mesh(new THREE.TorusGeometry(radius * 1.13, radius * .035, 8, 64), stripeMaterial);
     stripe.rotation.x = Math.PI / 2; stripe.position.y = -length * .17; stripe.castShadow = true; drumGroup.add(stripe);
     const marker = new THREE.Mesh(new THREE.SphereGeometry(radius * .075, 12, 8), markerMaterial);
     marker.position.set(radius * .68, length * .12, radius * .68); marker.castShadow = true; drumGroup.add(marker);
@@ -195,16 +211,16 @@
     const parchmentRect = readingWindow.getBoundingClientRect();
     const parchmentWidth = parchmentRect.width;
     const viewportWidth = window.innerWidth;
-    const diameterLimits = viewportWidth < 700 ? [28, 42] : viewportWidth < 1024 ? [36, 52] : [42, 62];
-    const drumDiameterCss = Math.min(diameterLimits[1], Math.max(diameterLimits[0], parchmentWidth * .055));
-    const drumLengthCss = parchmentWidth * 1.11;
+    const proportion = viewportWidth < 700 ? { length: 1.03, diameter: .1025, limits: [30, 46] } : viewportWidth < 1024 ? { length: 1.035, diameter: .084, limits: [42, 58] } : { length: 1.035, diameter: .08, limits: [46, 68] };
+    const drumDiameterCss = Math.min(proportion.limits[1], Math.max(proportion.limits[0], parchmentWidth * proportion.diameter));
+    const drumLengthCss = parchmentWidth * proportion.length;
     const drumOverhangCss = (drumLengthCss - parchmentWidth) / 2;
     const endCapDiameterCss = drumDiameterCss * 1.12;
-    const endCapDepthCss = drumDiameterCss * .28;
-    const axleDiameterCss = drumDiameterCss * .19;
-    const visibleAxleLengthCss = drumDiameterCss * .32;
+    const endCapDepthCss = drumDiameterCss * .23;
+    const axleDiameterCss = drumDiameterCss * .185;
+    const visibleAxleLengthCss = drumDiameterCss * .22;
     const completeAssemblyWidthCss = drumLengthCss + (endCapDepthCss * 2) + (visibleAxleLengthCss * 2);
-    const geometry = { parchmentWidth, parchmentLeft: parchmentRect.left - stageRect.left, parchmentRight: parchmentRect.right - stageRect.left, drumLengthCss, drumDiameterCss, drumOverhangCss, endCapDiameterCss, endCapDepthCss, axleDiameterCss, visibleAxleLengthCss, completeAssemblyWidthCss, contactMeshWidthCss: parchmentWidth };
+    const geometry = { parchmentWidth, parchmentLeft: parchmentRect.left - stageRect.left, parchmentRight: parchmentRect.right - stageRect.left, drumLengthCss, drumDiameterCss, drumOverhangCss, endCapDiameterCss, endCapDepthCss, axleDiameterCss, visibleAxleLengthCss, completeAssemblyWidthCss, contactMeshWidthCss: parchmentWidth, drumToDiameterRatio: drumLengthCss / drumDiameterCss, paperRadiusRatio: 1.12 };
     layout = { stageRect, width, height, worldPerCss: viewHeight / height, geometry };
     window.__scrollGeometry = geometry;
     window.__cvLayoutState = { ...window.__cvLayoutState, geometry };
@@ -235,13 +251,19 @@
     const parchmentWidth = g.parchmentWidth;
     const drumLeft = left - g.drumOverhangCss;
     const drumRight = left + parchmentWidth + g.drumOverhangCss;
-    measurementOverlay.innerHTML = `<i class="measure-line measure-line--paper-left" style="left:${left}px"></i><i class="measure-line measure-line--paper-right" style="left:${left + parchmentWidth}px"></i><i class="measure-line measure-line--drum-left" style="left:${drumLeft}px"></i><i class="measure-line measure-line--drum-right" style="left:${drumRight}px"></i><span class="measure-label" style="left:${left}px">paper ${Math.round(parchmentWidth)}px · drum ${Math.round(g.drumLengthCss)}px · Ø ${Math.round(g.drumDiameterCss)}px · overhang ${Math.round(g.drumOverhangCss)}px</span>`;
+    measurementOverlay.innerHTML = `<i class="measure-line measure-line--paper-left" style="left:${left}px"></i><i class="measure-line measure-line--paper-right" style="left:${left + parchmentWidth}px"></i><i class="measure-line measure-line--drum-left" style="left:${drumLeft}px"></i><i class="measure-line measure-line--drum-right" style="left:${drumRight}px"></i><span class="measure-label" style="left:${left}px">paper ${Math.round(parchmentWidth)}px · drum ${Math.round(g.drumLengthCss)}px · Ø ${Math.round(g.drumDiameterCss)}px · overhang ${Math.round(g.drumOverhangCss)}px · assembly ${Math.round(g.completeAssemblyWidthCss)}px · ratio ${g.drumToDiameterRatio.toFixed(1)}:1</span>`;
   };
 
   const syncAngle = (detail = window.__cvLayoutState) => {
     if (!layout || !detail) return;
     const travelWorld = detail.travel * layout.worldPerCss;
-    groups.forEach((group) => { group.userData.drum.rotation.y = group.userData.sign * (travelWorld / group.userData.radius); });
+    const progress = detail.progress ?? 0;
+    groups.forEach((group) => {
+      group.userData.drum.rotation.y = group.userData.sign * (travelWorld / group.userData.radius);
+      const paperRadiusRatio = group.userData.isTop ? 1.16 - (progress * .08) : 1.08 + (progress * .08);
+      const radialScale = (group.userData.radius * paperRadiusRatio) / group.userData.paperBaseRadius;
+      group.userData.paperMeshes.forEach((mesh) => mesh.scale.set(radialScale, 1, radialScale));
+    });
   };
 
   let renderFrame = 0;
