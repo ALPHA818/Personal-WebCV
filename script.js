@@ -19,20 +19,27 @@ const sectionNames = {
 
 let frame = 0;
 let lastProgress = -1;
-// Longitudinal feed prototype: CSS 3D rotation is applied only to the
-// internal cylinder around its left-to-right horizontal axis.
+let stableProgress = 0;
+let resizeRestoreFrame = 0;
+let resizeStateLocked = false;
+let resizeReleaseFrame = 0;
+let lastViewportWidth = window.innerWidth;
+let lastViewportHeight = window.innerHeight;
+// CSS 3D rotation is applied only to the internal drum around its horizontal
+// left-to-right axle. The page transports the parchment longitudinally as before.
 const rotationMap = { top: -1, bottom: 1 };
 
 function effectiveRadius(roller) {
   const drum = roller.querySelector('.roller-core');
-  // offsetHeight is the untransformed layout height, so the radius does not
-  // change as the cylinder turns and foreshortens in perspective.
+  // offsetHeight is the untransformed radial measurement of the horizontal
+  // drum, so it stays stable as the cylinder turns in perspective.
   return Math.max(18, drum.offsetHeight / 2);
 }
 
 function setTransport(progress) {
   if (Math.abs(progress - lastProgress) < 0.001) return;
   lastProgress = progress;
+  if (!resizeStateLocked && !document.body.classList.contains('is-resizing')) stableProgress = progress;
   const maxTravel = Math.max(0, track.scrollHeight - stage.querySelector('.reading-window').clientHeight);
   track.style.transform = `translate3d(0, ${-maxTravel * progress}px, 0)`;
 
@@ -44,10 +51,14 @@ function setTransport(progress) {
   window.dispatchEvent(new CustomEvent('cv-transport', { detail: window.__cvLayoutState }));
   const topAngle = rotationMap.top * (travel / effectiveRadius(topRoller)) * (180 / Math.PI);
   const bottomAngle = rotationMap.bottom * (travel / effectiveRadius(bottomRoller)) * (180 / Math.PI);
-  topRollerCylinder.style.setProperty('--angle', `${topAngle}deg`);
-  bottomRollerCylinder.style.setProperty('--angle', `${bottomAngle}deg`);
-  topRollerCylinder.style.transform = `rotateX(${topAngle}deg)`;
-  bottomRollerCylinder.style.transform = `rotateX(${bottomAngle}deg)`;
+  // Keep the two visible scrolls in the same visual phase. Transport and
+  // progress still use each roller's measured radius above; only the rendered
+  // presentation is shared so the top and bottom designs stay identical.
+  const sharedAngle = Math.abs(topAngle);
+  topRollerCylinder.style.setProperty('--angle', `${sharedAngle}deg`);
+  bottomRollerCylinder.style.setProperty('--angle', `${sharedAngle}deg`);
+  topRollerCylinder.style.transform = `rotateX(${sharedAngle}deg)`;
+  bottomRollerCylinder.style.transform = `rotateX(${sharedAngle}deg)`;
   document.body.classList.toggle('has-scrolled', progress > 0.012);
 
   const activeIndex = Math.min(sections.length - 1, Math.floor(progress * sections.length + 0.18));
@@ -58,8 +69,12 @@ function setTransport(progress) {
 
 function update() {
   document.documentElement.style.setProperty('--usable-vh', `${Math.max(320, window.innerHeight)}px`);
-  const maxScroll = experience.offsetHeight - window.innerHeight;
-  const progress = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
+  const maxScroll = documentScrollRange();
+  const measuredProgress = maxScroll > 0 ? Math.min(1, Math.max(0, window.scrollY / maxScroll)) : 0;
+  const viewportChanged = window.innerWidth !== lastViewportWidth || window.innerHeight !== lastViewportHeight;
+  const progress = resizeStateLocked || document.body.classList.contains('is-resizing') || viewportChanged ? stableProgress : measuredProgress;
+  lastViewportWidth = window.innerWidth;
+  lastViewportHeight = window.innerHeight;
   setTransport(progress);
   frame = 0;
 }
@@ -68,18 +83,51 @@ function requestUpdate() {
   if (!frame) frame = requestAnimationFrame(update);
 }
 
+function documentScrollRange() {
+  return Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+}
+
 window.addEventListener('scroll', requestUpdate, { passive: true });
-window.addEventListener('resize', () => {
-  const preservedProgress = lastProgress >= 0 ? lastProgress : null;
-  requestAnimationFrame(() => {
-    if (preservedProgress !== null) {
-      const maxScroll = experience.offsetHeight - window.innerHeight;
-      window.scrollTo(0, Math.max(0, maxScroll * preservedProgress));
-    }
-    // Force a render after geometry changes so both wheel centres and their
-    // travel/radius angles are recalculated at the new responsive size.
+// roller-scene.js owns the single revision-safe resize pipeline. Once it has
+// committed the new reading window, restore the same normalized document
+// progress against the new scroll range without accumulating offsets.
+window.addEventListener('cv-layout-resized', (event) => {
+  const preservedProgress = Math.min(1, Math.max(0, Number(event.detail?.progress) || 0));
+  const revision = Number(event.detail?.revision) || 0;
+  if (revision < (window.__cvResizeRestoreRevision || 0)) return;
+  window.__cvResizeRestoreRevision = revision;
+  stableProgress = preservedProgress;
+  resizeStateLocked = true;
+  cancelAnimationFrame(resizeReleaseFrame);
+  lastProgress = -1;
+  cancelAnimationFrame(resizeRestoreFrame);
+  resizeRestoreFrame = requestAnimationFrame(() => requestAnimationFrame(() => {
+    if (revision !== window.__cvResizeRestoreRevision) return;
+    const maxScroll = documentScrollRange();
+    // The document normally uses smooth scrolling for navigation. A resize
+    // restore is a state correction, so it must be atomic or the animation
+    // will be interrupted by the next resize and accumulate drift.
+    const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
+    window.scrollTo(0, maxScroll * preservedProgress);
+    document.documentElement.style.scrollBehavior = previousScrollBehavior;
     lastProgress = -1;
-    requestUpdate();
+    setTransport(preservedProgress);
+    resizeRestoreFrame = 0;
+  }));
+});
+
+window.addEventListener('cv-layout-stable', (event) => {
+  const revision = Number(event.detail?.revision) || 0;
+  if (revision !== (window.__cvResizeRestoreRevision || 0)) return;
+  cancelAnimationFrame(resizeReleaseFrame);
+  resizeReleaseFrame = requestAnimationFrame(() => {
+    resizeReleaseFrame = requestAnimationFrame(() => {
+      if (revision === (window.__cvResizeRestoreRevision || 0)) {
+        resizeStateLocked = false;
+        resizeReleaseFrame = 0;
+      }
+    });
   });
 });
 
@@ -88,7 +136,7 @@ navItems.forEach((item) => {
     event.preventDefault();
     const targetIndex = sections.findIndex((section) => section.dataset.section === item.dataset.target);
     if (targetIndex < 0) return;
-    const maxScroll = experience.offsetHeight - window.innerHeight;
+    const maxScroll = documentScrollRange();
     const progress = targetIndex / (sections.length - 1);
     window.scrollTo({ top: maxScroll * progress, behavior: 'smooth' });
   });
